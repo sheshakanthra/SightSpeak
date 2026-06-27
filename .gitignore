@@ -25,3 +25,5 @@ android/*.iml
 .DS_Store
 Thumbs.db
 "@ | Out-File -FilePath .gitignore -Encoding utf8
+
+ml/.venv/

@@ -1,0 +1,71 @@
+name: SightSpeak Eval Gate
+
+# Retrain -> evaluate -> gate. Blocks merge if the model regresses:
+#   * mAP@0.5 drops below 0.45, or
+#   * inference latency exceeds 65 ms.
+# Thresholds mirror params.yaml -> evaluate.{min_map,max_latency_ms}.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "ml/**"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ml
+
+jobs:
+  eval-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Pull data (DVC)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: dvc pull --allow-missing || echo "No DVC remote configured; skipping pull"
+
+      - name: Reproduce pipeline (train -> export -> evaluate)
+        run: dvc repro
+
+      - name: Enforce eval gate
+        run: |
+          python - <<'PY'
+          import json, sys
+          m = json.load(open("metrics.json"))
+          min_map = m["min_map"]
+          max_lat = m["max_latency_ms"]
+          print(f"mAP@0.5    : {m['map50']:.4f} (min {min_map})")
+          print(f"latency ms : {m['latency_ms']:.2f} (max {max_lat})")
+          failures = []
+          if m["map50"] < min_map:
+              failures.append(f"mAP {m['map50']:.4f} < {min_map}")
+          if m["latency_ms"] > max_lat:
+              failures.append(f"latency {m['latency_ms']:.2f}ms > {max_lat}ms")
+          if failures:
+              print("GATE FAILED: " + "; ".join(failures))
+              sys.exit(1)
+          print("GATE PASSED")
+          PY
+
+      - name: Upload metrics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-metrics
+          path: ml/metrics.json

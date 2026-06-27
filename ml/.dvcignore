@@ -1,0 +1,6 @@
+# Patterns DVC should skip when scanning the workspace.
+# See https://dvc.org/doc/user-guide/project-structure/dvcignore-files
+mlruns/
+runs/
+*.pyc
+__pycache__/

@@ -1,0 +1,15 @@
+[core]
+    remote = sightspeak-storage
+    autostage = true
+
+# Default remote stub. Point `url` at your real bucket/path and provide
+# credentials via env vars (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY) or
+# `dvc remote modify --local`. The eval_gate workflow passes those secrets.
+['remote "sightspeak-storage"']
+    url = s3://CHANGE-ME-sightspeak/dvcstore
+
+# Example alternatives (uncomment and adapt one):
+# ['remote "local-store"']
+#     url = /absolute/path/to/dvcstore
+# ['remote "gdrive-store"']
+#     url = gdrive://<folder-id>

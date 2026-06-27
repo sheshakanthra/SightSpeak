@@ -1,0 +1,46 @@
+# SightSpeak DVC pipeline.
+# Run the full pipeline with:  dvc repro
+# Stages are chained by their deps/outs; DVC re-runs only what changed.
+
+stages:
+  train:
+    cmd: python train/train.py --params params.yaml
+    deps:
+      - train/train.py
+      - data/data.yaml
+      - data/images/train
+      - data/labels/train
+    params:
+      - model
+      - dataset
+      - train
+      - mlflow
+    outs:
+      - runs/sightspeak-yolov8n/weights/best.pt:
+          cache: true
+
+  export:
+    cmd: python export/export.py --params params.yaml --weights runs/sightspeak-yolov8n/weights/best.pt
+    deps:
+      - export/export.py
+      - runs/sightspeak-yolov8n/weights/best.pt
+      - data/images/val
+    params:
+      - export
+    outs:
+      - export/sightspeak_int8.tflite:
+          cache: true
+
+  evaluate:
+    cmd: python evaluate/evaluate.py --params params.yaml --weights runs/sightspeak-yolov8n/weights/best.pt
+    deps:
+      - evaluate/evaluate.py
+      - runs/sightspeak-yolov8n/weights/best.pt
+      - data/data.yaml
+      - data/images/val
+      - data/labels/val
+    params:
+      - evaluate
+    metrics:
+      - metrics.json:
+          cache: false

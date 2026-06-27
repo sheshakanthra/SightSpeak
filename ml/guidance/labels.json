@@ -1,0 +1,102 @@
+{
+  "_meta": {
+    "description": "Object class -> spoken guidance mapping for SightSpeak. Acts as the RAG/retrieval layer between the detector and the text-to-speech engine. Each detected class is looked up here to produce a natural spoken cue for a visually impaired user.",
+    "version": "1.0.0",
+    "schema": {
+      "priority": "1=highest (immediate hazard) .. 5=lowest (ambient context)",
+      "category": "hazard | mobility | object | person | navigation",
+      "template_vars": "{position} (left/center/right), {distance} (near/far)"
+    },
+    "fallback": "Object detected {position}."
+  },
+  "person": {
+    "category": "person",
+    "priority": 2,
+    "guidance": "Person {position}, {distance}.",
+    "announce_repeat": false
+  },
+  "bicycle": {
+    "category": "mobility",
+    "priority": 1,
+    "guidance": "Caution, bicycle approaching {position}.",
+    "announce_repeat": true
+  },
+  "car": {
+    "category": "hazard",
+    "priority": 1,
+    "guidance": "Warning, car {position}, {distance}.",
+    "announce_repeat": true
+  },
+  "motorcycle": {
+    "category": "hazard",
+    "priority": 1,
+    "guidance": "Warning, motorcycle {position}.",
+    "announce_repeat": true
+  },
+  "bus": {
+    "category": "hazard",
+    "priority": 1,
+    "guidance": "Warning, bus {position}, {distance}.",
+    "announce_repeat": true
+  },
+  "truck": {
+    "category": "hazard",
+    "priority": 1,
+    "guidance": "Warning, truck {position}, {distance}.",
+    "announce_repeat": true
+  },
+  "traffic light": {
+    "category": "navigation",
+    "priority": 2,
+    "guidance": "Traffic light ahead.",
+    "announce_repeat": false
+  },
+  "stop sign": {
+    "category": "navigation",
+    "priority": 2,
+    "guidance": "Stop sign ahead.",
+    "announce_repeat": false
+  },
+  "bench": {
+    "category": "object",
+    "priority": 4,
+    "guidance": "Bench {position}.",
+    "announce_repeat": false
+  },
+  "dog": {
+    "category": "mobility",
+    "priority": 2,
+    "guidance": "Dog {position}, {distance}.",
+    "announce_repeat": true
+  },
+  "chair": {
+    "category": "object",
+    "priority": 3,
+    "guidance": "Chair {position}.",
+    "announce_repeat": false
+  },
+  "couch": {
+    "category": "object",
+    "priority": 4,
+    "guidance": "Couch {position}.",
+    "announce_repeat": false
+  },
+  "dining table": {
+    "category": "object",
+    "priority": 3,
+    "guidance": "Table {position}.",
+    "announce_repeat": false
+  },
+  "door": {
+    "category": "navigation",
+    "priority": 2,
+    "guidance": "Door {position}.",
+    "announce_repeat": false
+  },
+  "stairs": {
+    "category": "hazard",
+    "priority": 1,
+    "guidance": "Caution, stairs ahead.",
+    "announce_repeat": true
+  }
+}

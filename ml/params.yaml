@@ -1,0 +1,51 @@
+# SightSpeak — central hyperparameter & config file
+# All training/export/eval params live here so DVC can track changes
+# and trigger pipeline re-runs on edit.
+
+model:
+  arch: yolov8n.pt          # YOLOv8-nano base checkpoint
+  num_classes: 80           # COCO default; override for custom dataset
+  input_size: 640           # square inference resolution
+
+dataset:
+  config: data/data.yaml    # ultralytics dataset descriptor (DVC tracked)
+  train_split: data/images/train
+  val_split: data/images/val
+
+train:
+  epochs: 100
+  batch: 16
+  imgsz: 640
+  optimizer: AdamW
+  lr0: 0.001                # initial learning rate
+  lrf: 0.01                 # final LR fraction (lr0 * lrf)
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 3
+  patience: 25              # early-stop patience
+  seed: 42
+  device: 0                 # GPU id, or "cpu"
+  workers: 8
+  project: runs
+  name: sightspeak-yolov8n
+
+export:
+  format: tflite
+  int8: true                # INT8 post-training quantization
+  imgsz: 640
+  # representative dataset for quantization calibration
+  calib_data: data/images/val
+  calib_samples: 200
+
+evaluate:
+  imgsz: 640
+  device: 0
+  # gate thresholds — keep in sync with .github/workflows/eval_gate.yml
+  min_map: 0.45             # minimum acceptable mAP@0.5
+  max_latency_ms: 65.0      # maximum acceptable per-image inference latency
+  latency_runs: 100         # timed inference iterations for latency benchmark
+  latency_warmup: 10        # warmup iterations excluded from timing
+
+mlflow:
+  experiment: sightspeak
+  tracking_uri: ./mlruns    # local file store by default; override via env

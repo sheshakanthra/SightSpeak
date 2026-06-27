@@ -1,0 +1,25 @@
+# SightSpeak ML pipeline dependencies
+
+# Core training / inference
+ultralytics==8.2.103
+torch>=2.2.0
+torchvision>=0.17.0
+
+# Export & quantization
+tensorflow==2.16.1
+onnx>=1.16.0
+onnxruntime>=1.18.0
+
+# Experiment tracking
+mlflow==2.14.1
+
+# Data & pipeline versioning
+dvc[s3]==3.51.2
+
+# Evaluation / numerics
+numpy>=1.26.0
+pyyaml>=6.0
+opencv-python-headless>=4.9.0
+
+# Utilities
+tqdm>=4.66.0

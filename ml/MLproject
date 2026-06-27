@@ -1,0 +1,26 @@
+name: sightspeak
+
+# MLflow Project definition. Allows reproducible runs via:
+#   mlflow run ml/ -e train
+#   mlflow run ml/ -e export
+#   mlflow run ml/ -e evaluate
+
+python_env: python_env.yaml
+
+entry_points:
+  train:
+    parameters:
+      params: { type: string, default: params.yaml }
+    command: "python train/train.py --params {params}"
+
+  export:
+    parameters:
+      params: { type: string, default: params.yaml }
+      weights: { type: string, default: runs/sightspeak-yolov8n/weights/best.pt }
+    command: "python export/export.py --params {params} --weights {weights}"
+
+  evaluate:
+    parameters:
+      params: { type: string, default: params.yaml }
+      weights: { type: string, default: runs/sightspeak-yolov8n/weights/best.pt }
+    command: "python evaluate/evaluate.py --params {params} --weights {weights}"

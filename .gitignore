@@ -1,0 +1,27 @@
+@"
+# Python / ML
+__pycache__/
+*.pyc
+.venv/
+*.pt
+*.onnx
+*.tflite
+mlruns/
+data/
+
+# Android
+android/.gradle/
+android/build/
+android/local.properties
+android/app/build/
+android/*.iml
+.idea/
+
+# DVC
+/data
+.dvc/cache
+
+# OS
+.DS_Store
+Thumbs.db
+"@ | Out-File -FilePath .gitignore -Encoding utf8
